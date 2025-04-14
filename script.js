@@ -7,19 +7,34 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 const projectCards = document.querySelectorAll('.project-card');
 const skillBars = document.querySelectorAll('.skill-progress');
 const contactForm = document.getElementById('contactForm');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
 
 // Sticky Header
-window.addEventListener('scroll', () => {
+function updateHeaderStyle() {
+    const isDarkMode = document.documentElement.hasAttribute('data-theme');
     if (window.scrollY > 100) {
         header.style.padding = '10px 0';
-        header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-        header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        if (isDarkMode) {
+            header.style.backgroundColor = 'rgba(18, 18, 18, 0.98)';
+            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+        } else {
+            header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        }
     } else {
         header.style.padding = '20px 0';
-        header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-        header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+        if (isDarkMode) {
+            header.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
+            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.15)';
+        } else {
+            header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+        }
     }
-});
+}
+
+window.addEventListener('scroll', updateHeaderStyle);
 
 // Smooth Scrolling for Navigation
 navLinks.forEach(link => {
@@ -150,8 +165,50 @@ function typeWriter(textElement, text, i, fnCallback) {
     }
 }
 
+// Dark Mode Functionality
+function initTheme() {
+    // Check for saved theme preference or use device preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+    }
+}
+
+// Toggle theme function
+function toggleTheme() {
+    if (document.documentElement.hasAttribute('data-theme')) {
+        // Switch to light mode
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+    } else {
+        // Switch to dark mode
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+    }
+    
+    // Update header style when theme changes
+    updateHeaderStyle();
+}
+
+// Add event listener for theme toggle
+themeToggle.addEventListener('click', toggleTheme);
+
 // Start the typing animation when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize theme
+    initTheme();
+    
+    // Update header style initially
+    updateHeaderStyle();
+    
     const textElement = document.querySelector('.typing-text');
     if (textElement) {
         const text = textElement.textContent;
