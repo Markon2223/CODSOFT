@@ -12,4 +12,3 @@ A clean, modern, and responsive personal portfolio website built with HTML, CSS,
 - Contact form
 - Animated elements on scroll
 - Mobile-friendly layout
-
